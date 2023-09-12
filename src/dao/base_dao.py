@@ -31,8 +31,8 @@ class BaseDAO:
         except Exception as e:
             print(f'Error: {e}')
 
-    def read(self, count: int = 1) -> List[dict]:
-        cursor = self.collection.find().sort('updated_at', -1).limit(count)
+    def read(self, count: int = 1, sorting_key: int = -1) -> List[dict]:
+        cursor = self.collection.find().sort('updated_at', sorting_key).limit(count)
         items = []
         for item in cursor:
             items.append(item)

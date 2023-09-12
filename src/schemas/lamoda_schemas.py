@@ -1,5 +1,5 @@
 from datetime import datetime
-from .base_schema import BaseSchema
+from schemas.base_schema import BaseSchema
 
 
 class LamodaItem(BaseSchema):
@@ -8,6 +8,5 @@ class LamodaItem(BaseSchema):
     title: str
     category: str
     price: str
-    currency: str
     created_at: datetime = None
     updated_at: datetime = None
