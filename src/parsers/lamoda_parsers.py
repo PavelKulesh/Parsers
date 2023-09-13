@@ -1,14 +1,11 @@
-import os
 import aiohttp
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
 
-from dao.lamoda_dao import LamodaItemDAO
-
-load_dotenv()
+from src.dao.lamoda_dao import LamodaItemDAO
+from src.config.database import Database
 
 
-async def parse_lamoda_items(url: str, page: int = 1):
+async def parse_lamoda_items(database: Database, url: str, page: int = 1):
     url_on_page = f'{url}?page={page}'
 
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
@@ -31,5 +28,5 @@ async def parse_lamoda_items(url: str, page: int = 1):
             'price': item.find('span', class_='x-product-card-description__price-WEB8507_price_no_bold').text.strip()
         })
 
-    lamoda_items_dao = LamodaItemDAO(os.getenv('DB_URI'), os.getenv('DB_NAME'))
+    lamoda_items_dao = LamodaItemDAO(database)
     lamoda_items_dao.create_or_update(data)

@@ -1,16 +1,14 @@
-from pymongo import MongoClient
 from datetime import datetime
 from typing import List, Type
 
-from dao.validators import get_validated_data
-from schemas.base_schema import BaseSchema
+from src.dao.validators import get_validated_data
+from src.schemas.base_schema import BaseSchema
+from src.config.database import Database
 
 
 class BaseDAO:
-    def __init__(self, db_uri: str, db_name: str, collection_name: str, schema_class: Type[BaseSchema]):
-        self.client = MongoClient(db_uri)
-        self.db = self.client[db_name]
-        self.collection = self.db[collection_name]
+    def __init__(self, database: Database, collection_name: str, schema_class: Type[BaseSchema]):
+        self.collection = database.db[collection_name]
         self.schema = schema_class
 
     def create_or_update(self, data: List[dict]) -> List[dict]:
@@ -35,5 +33,6 @@ class BaseDAO:
         cursor = self.collection.find().sort('updated_at', sorting_key).limit(count)
         items = []
         for item in cursor:
+            del item['_id']
             items.append(item)
         return items
