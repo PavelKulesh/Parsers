@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
 
-from src.parsers.lamoda_parsers import parse_lamoda_items
 from src.config.database import Database
 from src.config.dependencies import get_database
 from src.dao.lamoda_dao import LamodaItemDAO
 from src.exceptions.custom_exception import CustomExceptionHandler
+from src.producer.producer import send_message
 
 router = APIRouter()
 
@@ -13,12 +13,8 @@ router = APIRouter()
 @router.post('/items/', status_code=201)
 async def create_lamoda_items(url: str = 'https://www.lamoda.ru/c/1386/shoes-premium-men-obuv/', pages: int = 1,
                               database: Database = Depends(get_database)):
-    try:
-        for page in range(1, pages + 1):
-            await parse_lamoda_items(database, url, page)
-        return {"message": "Lamoda Items created successfully"}
-    except Exception as e:
-        raise CustomExceptionHandler(detail='Lamoda url is incorrect', status_code=400)
+    await send_message('lamoda_parser', {'url': url, 'pages': pages}, 'items')
+    return {"message": "Lamoda Items Parsing request sent to Kafka"}
 
 
 @router.get('/items/')

@@ -1,4 +1,5 @@
 import os
+import asyncio
 from redis import asyncio as aioredis
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -7,6 +8,7 @@ from fastapi.responses import JSONResponse
 
 from src.routers import lamoda_router, twitch_router
 from src.exceptions.custom_exception import CustomExceptionHandler
+from src.consumer.consumer import read_messages
 
 app = FastAPI()
 
@@ -27,3 +29,5 @@ async def custom_exception_handler(request, exc):
 
 app.include_router(lamoda_router.router, prefix="/lamoda", tags=["lamoda"])
 app.include_router(twitch_router.router, prefix="/twitch", tags=["twitch"])
+
+asyncio.create_task(read_messages())
