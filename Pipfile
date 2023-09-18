@@ -6,6 +6,18 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
+pymongo = "==4.5.0"
+requests = "==2.31.0"
+beautifulsoup4 = "==4.12.2"
+python-dotenv = "==1.0.0"
+aiohttp = "==3.8.5"
+pydantic-settings = "*"
+fastapi-cache2 = {extras = ["redis"], version = "*"}
+aiokafka = "*"
+pytest = "*"
+mongomock = "*"
+pytest-asyncio = "*"
+aioresponses = "*"
 
 [dev-packages]
 

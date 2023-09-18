@@ -1,0 +1,97 @@
+version: "3"
+
+services:
+  web:
+    container_name: web
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    entrypoint: [ "/app/entrypoint.sh", "web" ]
+
+  db:
+    container_name: db
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data/db
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data/cache
+    restart: unless-stopped
+
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper
+    ports:
+      - "2181:2181"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "zookeeper-shell", "zookeeper:2181", "ls", "/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+    env_file:
+      - .env
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "kafka:29092", "--list" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+volumes:
+  mongo:
+  redis:
