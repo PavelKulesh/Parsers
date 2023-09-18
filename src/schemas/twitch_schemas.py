@@ -1,5 +1,6 @@
 from datetime import datetime
-from .base_schema import BaseSchema
+from typing import Union
+from schemas.base_schema import BaseSchema
 
 
 class TwitchGame(BaseSchema):
@@ -21,8 +22,8 @@ class TwitchStream(BaseSchema):
     viewer_count: int
     started_at: str
     language: str
-    tag_ids: list[str]
-    tags: list[str]
+    tag_ids: Union[list[str], None]
+    tags: Union[list[str], None]
     is_mature: bool
     created_at: datetime = None
     updated_at: datetime = None
