@@ -1,31 +1,26 @@
+import os
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
 
-from src.parsers.twitch_parsers import parse_twitch_games, parse_twitch_streams
 from src.config.database import Database
 from src.config.dependencies import get_database
 from src.dao.twitch_dao import TwitchGameDAO, TwitchStreamDAO
 from src.exceptions.custom_exception import CustomExceptionHandler
+from src.producer.producer import send_message
 
 router = APIRouter()
 
 
 @router.post('/games/', status_code=201)
 async def create_twitch_games(database: Database = Depends(get_database)):
-    try:
-        await parse_twitch_games(database)
-        return {"message": "Games created successfully"}
-    except Exception as e:
-        raise CustomExceptionHandler(detail="Game Parsing Error", status_code=500)
+    await send_message('twitch_parser', os.getenv('TWITCH_GAMES_URL'), 'games')
+    return {"message": "Games Parsing request sent to Kafka"}
 
 
 @router.post('/streams/', status_code=201)
 async def create_twitch_streams(database: Database = Depends(get_database)):
-    try:
-        await parse_twitch_streams(database)
-        return {"message": "Streams created successfully"}
-    except Exception as e:
-        raise CustomExceptionHandler(detail="Stream Parsing Error", status_code=500)
+    await send_message('twitch_parser', os.getenv('TWITCH_STREAMS_URL'), 'streams')
+    return {"message": "Streams Parsing request sent to Kafka"}
 
 
 @router.get('/games/')
