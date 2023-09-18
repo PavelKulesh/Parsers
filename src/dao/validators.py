@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 from typing import Type, List
 
-from schemas.base_schema import BaseSchema
+from src.schemas.base_schema import BaseSchema
 
 
 def get_validated_data(schema_class: Type[BaseSchema], response_data: List[dict]) -> List[dict]:

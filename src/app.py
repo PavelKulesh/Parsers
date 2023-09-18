@@ -1,15 +1,8 @@
-from typing import Union
-
 from fastapi import FastAPI
+
+from src.routers import lamoda_router, twitch_router
 
 app = FastAPI()
 
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+app.include_router(lamoda_router.router, prefix="/lamoda", tags=["lamoda"])
+app.include_router(twitch_router.router, prefix="/twitch", tags=["twitch"])

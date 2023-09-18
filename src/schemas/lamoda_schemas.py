@@ -1,5 +1,6 @@
 from datetime import datetime
-from schemas.base_schema import BaseSchema
+
+from src.schemas.base_schema import BaseSchema
 
 
 class LamodaItem(BaseSchema):

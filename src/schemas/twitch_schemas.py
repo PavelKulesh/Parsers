@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Union
-from schemas.base_schema import BaseSchema
+
+from src.schemas.base_schema import BaseSchema
 
 
 class TwitchGame(BaseSchema):

@@ -3,7 +3,7 @@ import aiohttp
 from typing import Awaitable
 from dotenv import load_dotenv
 
-from dao.base_dao import BaseDAO
+from src.dao.base_dao import BaseDAO
 
 load_dotenv()
 
