@@ -37,5 +37,17 @@ services:
       - db
     restart: unless-stopped
 
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data/cache
+    depends_on:
+      - web
+    restart: unless-stopped
+
 volumes:
   mongo:
+  redis:

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from src.parsers.lamoda_parsers import parse_lamoda_items
 from src.config.database import Database
@@ -21,6 +22,7 @@ async def create_lamoda_items(url: str = 'https://www.lamoda.ru/c/1386/shoes-pre
 
 
 @router.get('/items/')
+@cache(expire=60)
 async def read_lamoda_items(database: Database = Depends(get_database), count: int = 10):
     try:
         lamoda_item_dao = LamodaItemDAO(database)

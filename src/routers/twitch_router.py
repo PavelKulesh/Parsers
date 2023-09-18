@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from src.parsers.twitch_parsers import parse_twitch_games, parse_twitch_streams
 from src.config.database import Database
@@ -28,6 +29,7 @@ async def create_twitch_streams(database: Database = Depends(get_database)):
 
 
 @router.get('/games/')
+@cache(expire=60)
 async def read_twitch_games(database: Database = Depends(get_database), count: int = 10):
     try:
         twitch_game_dao = TwitchGameDAO(database)
@@ -37,6 +39,7 @@ async def read_twitch_games(database: Database = Depends(get_database), count: i
 
 
 @router.get('/streams/')
+@cache(expire=60)
 async def read_twitch_streams(database: Database = Depends(get_database), count: int = 10):
     try:
         twitch_stream_dao = TwitchStreamDAO(database)
